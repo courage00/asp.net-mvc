@@ -1,0 +1,116 @@
+﻿
+@using PagedList.Mvc
+@model MVCBASE.ViewModels.EmployeeListViewModel
+
+@{
+    ViewBag.Title = "Employee - List";
+}
+<div>
+    @using (Html.BeginForm("Index", "Employee", FormMethod.Post, new { id = "EmployeeList" }))
+    {
+
+
+        <label> 員工姓名:</label>
+
+                @Html.EditorFor(x => x.SearchParameter.EmployeeName, new { })
+       
+
+        <label> 職務:</label>
+
+                @Html.EditorFor(x => x.SearchParameter.Title, new {  })
+
+        <input type="submit" value="搜尋" >        
+     
+
+
+    } 
+    <p>@ViewBag.querytitle</p>
+  
+</div>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Employees.FirstOrDefault().EmployeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employees.FirstOrDefault().Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employees.FirstOrDefault().BirthDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employees.FirstOrDefault().Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employees.FirstOrDefault().Salary)
+        </th>
+        <th>
+            <h>圖片<h>
+        </th>
+        <th>
+            @Html.ActionLink("新增", "Create")
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model.Employees)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BirthDate )
+              
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salary)
+            </td>
+            <td>
+                <img src="@(Url.Content("~/FileUploads/")+item.PhotoPath)" width="80" /> 
+            </td>
+            <td>
+                @Html.ActionLink("編輯", "Edit", new { id = item.EmployeeID }) |
+                @Html.ActionLink("刪除", "Delete", new { id = item.EmployeeID })
+            </td>
+        </tr>
+    }
+</table>
+@Html.PagedListPager(Model.Employees,
+    page => Url.Action("", new { page }),
+    PagedListRenderOptions.ClassicPlusFirstAndLast)
+
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $('.pagination>li>a[href]').each(function (i, item) {
+                var page = $(item).attr('href').replace('/?page=', '');
+                $(item).attr('href', '#').click(function () { postPage(page); });
+            });
+        });
+
+        function postPage(page) {
+            var targetFormId = '#EmployeeList';
+            if ($(targetFormId).size() > 0) {
+                $('<input>')
+                    .attr({ type: 'hidden', id: 'PageIndex', name: 'PageIndex', value: page })
+                    .appendTo($(targetFormId));
+                $(targetFormId).submit();
+            }
+        };
+    </script>
+
+}
+
+
+
